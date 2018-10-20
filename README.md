@@ -1,6 +1,6 @@
 # Bridge
 
-[![Release](https://jitpack.io/v/Livefront/bridge.svg)](https://jitpack.io/#Livefront/bridge)
+[![Release](https://jitpack.io/v/halzhang/bridge-mmkv.svg)](https://jitpack.io/#halzhang/bridge-mmkv)
 
 A library for avoiding TransactionTooLargeException during state saving and restoration.
 
@@ -95,7 +95,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.livefront:bridge:v1.1.3'
+    compile 'com.github.halzhang:bridge-mmkv:v1.1.4'
 }
 ```
 
