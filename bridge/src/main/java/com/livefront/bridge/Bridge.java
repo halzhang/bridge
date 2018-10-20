@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.tencent.mmkv.MMKV;
+
 public class Bridge {
 
     private static BridgeDelegate sDelegate;
@@ -52,6 +54,7 @@ public class Bridge {
      */
     public static void initialize(@NonNull Context context,
                                   @NonNull SavedStateHandler savedStateHandler) {
+        MMKV.initialize(context);
         sDelegate = new BridgeDelegate(context, savedStateHandler);
     }
 

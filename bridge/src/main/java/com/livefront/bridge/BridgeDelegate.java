@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.util.Base64;
 
 import com.livefront.bridge.wrapper.WrapperUtils;
+import com.tencent.mmkv.MMKV;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,11 +31,11 @@ class BridgeDelegate {
     private Map<String, Bundle> mUuidBundleMap = new HashMap<>();
     private Map<Object, String> mObjectUuidMap = new WeakHashMap<>();
     private SavedStateHandler mSavedStateHandler;
-    private SharedPreferences mSharedPreferences;
+    private MMKV mMMKV;
 
     BridgeDelegate(@NonNull Context context,
                    @NonNull SavedStateHandler savedStateHandler) {
-        mSharedPreferences = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
+        mMMKV = MMKV.defaultMMKV();
         mSavedStateHandler = savedStateHandler;
         registerForLifecycleEvents(context);
     }
@@ -53,9 +54,7 @@ class BridgeDelegate {
     void clearAll() {
         mUuidBundleMap.clear();
         mObjectUuidMap.clear();
-        mSharedPreferences.edit()
-                .clear()
-                .apply();
+        mMMKV.clear();
     }
 
     private void clearDataForUuid(@NonNull String uuid) {
@@ -64,9 +63,7 @@ class BridgeDelegate {
     }
 
     private void clearDataFromDisk(@NonNull String uuid) {
-        mSharedPreferences.edit()
-                .remove(getKeyForEncodedBundle(uuid))
-                .apply();
+        mMMKV.removeValueForKey(getKeyForEncodedBundle(uuid));
     }
 
     private String getKeyForEncodedBundle(@NonNull String uuid) {
@@ -79,7 +76,7 @@ class BridgeDelegate {
 
     @Nullable
     private Bundle readFromDisk(@NonNull String uuid) {
-        String encodedString = mSharedPreferences.getString(getKeyForEncodedBundle(uuid), null);
+        String encodedString = mMMKV.getString(getKeyForEncodedBundle(uuid), null);
         if (encodedString == null) {
             return null;
         }
@@ -108,9 +105,7 @@ class BridgeDelegate {
                         }
                         mIsFirstCreateCall = false;
                         if (savedInstanceState == null) {
-                            mSharedPreferences.edit()
-                                    .clear()
-                                    .apply();
+                            mMMKV.clear();
                         }
                     }
 
@@ -169,9 +164,7 @@ class BridgeDelegate {
         Parcel parcel = Parcel.obtain();
         parcel.writeBundle(bundle);
         String encodedString = Base64.encodeToString(parcel.marshall(), 0);
-        mSharedPreferences.edit()
-                .putString(getKeyForEncodedBundle(uuid), encodedString)
-                .apply();
+        mMMKV.putString(getKeyForEncodedBundle(uuid), encodedString);
         parcel.recycle();
     }
 
